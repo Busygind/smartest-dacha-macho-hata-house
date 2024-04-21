@@ -1,4 +1,4 @@
-package itmo.com.smartest_dacha.plugins
+package com.dacha.core.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.response.*

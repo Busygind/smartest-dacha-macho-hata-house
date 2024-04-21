@@ -1,0 +1,76 @@
+@startuml
+title "Smartest Hata (SH) interaction diagram"
+
+
+component [mobile-backend] as MobileBackend <<Backend Component>>
+note left
+Connects "physical controllers" with user applications,
+send requests to physical world. Collects logs and saves
+data of users' using additional services
+end note
+
+
+interface "Secured HTTP" as SecuredMobileBackendHttpInterface
+note left
+<code>
+API to:
+    1. change state of any device in the house
+    2. receive info about the house state
+    3. receive online video
+    4. register/login
+</code>
+end note
+
+SecuredMobileBackendHttpInterface --- MobileBackend
+
+database "Log Database" as LogDB <<Clickhouse>>
+interface "LogDb Interface" as LogDbInterface
+LogDB -- LogDbInterface
+
+component [log-backend] as LogBackend <<Backend Component>> {
+
+}
+LogBackend - LogDbInterface
+
+queue "sh-broker" as SHBroker <<Redis Broker>>
+interface "sh-broker Interface" as SHBrokerInterface
+
+SHBroker -- SHBrokerInterface
+
+SHBrokerInterface <-- MobileBackend
+SHBrokerInterface --> LogBackend
+
+database "SH DB" as SHDB <<PostgreSQL>>
+interface "DB\ninterface" as SHDBInterface
+SHDBInterface - SHDB
+
+component [sh-db-backend] as DbBackend <<Backend Component>> {
+
+}
+DbBackend -> SHDBInterface
+interface "HTTP" as DbBackendHttpInterface
+DbBackendHttpInterface - DbBackend
+MobileBackend --> DbBackendHttpInterface
+
+package "House physical controllers" {
+    component [any-house] as anyHouse <<House Physical state controller>>
+    note top
+    Implements a physical house controller
+    with in-memory state of the house
+    (e.g. temperature, sensors states)
+    end note
+    interface "any-house-http" as anyHouseHttp
+    anyHouse - anyHouseHttp
+}
+
+
+MobileBackend ----> anyHouseHttp
+
+component "Mobile Front" as mobileFront
+note top
+Web GUI to operate the house
+end note
+
+mobileFront --> SecuredMobileBackendHttpInterface : use with authentication
+
+@enduml
