@@ -1,0 +1,15 @@
+meta {
+  name: changeTriggerAmount
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{baseUrl}}/houses/H/rooms/R/devices/D/trigger?amount=
+  body: none
+  auth: none
+}
+
+query {
+  amount: 
+}

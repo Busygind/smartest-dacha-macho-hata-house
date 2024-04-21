@@ -9,26 +9,25 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-var repository = HouseRepository()
-var service = HouseService(repository)
+private var houseRepository = HouseRepository()
+private var houseService = HouseService(houseRepository)
 
 fun Route.housesRoute() {
 
     route("/houses") {
         get("/{houseId}") {
-            val house = service.getHouse(call.parameters["houseId"]!!.toUuid())
+            val house = houseService.getHouse(call.parameters["houseId"]!!.toUuid())
             call.respond(house)
         }
 
         post("/") {
             val houseToSave = call.receive<House>()
-            call.respond(service.saveHouse(houseToSave))
+            call.respond(houseService.saveHouse(houseToSave))
         }
 
-        get("/{houseId}") {
-//            val issueId = call.parameters["issueId"]
-//                ?: throw IllegalArgumentException("Parameter issue Id not found")
-//            issueRepo.get(issueId.toInt())?.let { issue -> call.respond(issue) }
+        get("/") {
+            call.respondText("Not implemented")
+            // todo получить дома по юзеру
         }
     }
 }
