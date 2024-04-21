@@ -1,15 +1,28 @@
 package com.dacha.core
 
+import com.dacha.core.plugins.configureSerialization
+import com.dacha.core.routing.housesRoute
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
-import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import com.dacha.core.plugins.configureRouting
+import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.Database
 
-fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+fun main(args: Array<String>): Unit = EngineMain.main(args)
+
+@Suppress("unused")
+fun Application.module() {
+    configureSerialization()
+    initDB()
+
+    install(Routing) {
+        housesRoute()
+    }
 }
 
-fun Application.module() {
-    configureRouting()
+fun initDB() {
+    val config = HikariConfig("/hikari.properties")
+    val ds = HikariDataSource(config)
+    Database.connect(ds)
 }
