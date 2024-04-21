@@ -1,2 +1,2 @@
 rootProject.name = "rmp-backend"
-include("core")
+include("core", "state-log-collector")
