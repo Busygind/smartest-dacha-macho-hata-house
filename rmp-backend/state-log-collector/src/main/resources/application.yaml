@@ -1,0 +1,10 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - com.dacha.ApplicationKt.module
+
+storage:
+  clickhouse:
+    url: "http://default:@localhost:8123/log-collector"

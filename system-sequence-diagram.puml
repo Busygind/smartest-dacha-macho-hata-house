@@ -2,7 +2,7 @@
 title "Smartest Hata (SH) interaction diagram"
 
 
-component [mobile-backend] as MobileBackend <<Backend Component>>
+component [core] as Core <<Backend Component>>
 note left
 Connects "physical controllers" with user applications,
 send requests to physical world. Collects logs and saves
@@ -21,7 +21,7 @@ API to:
 </code>
 end note
 
-SecuredMobileBackendHttpInterface --- MobileBackend
+SecuredMobileBackendHttpInterface --- Core
 
 database "Log Database" as LogDB <<Clickhouse>>
 interface "LogDb Interface" as LogDbInterface
@@ -32,39 +32,36 @@ component [log-backend] as LogBackend <<Backend Component>> {
 }
 LogBackend - LogDbInterface
 
-queue "sh-broker" as SHBroker <<Redis Broker>>
-interface "sh-broker Interface" as SHBrokerInterface
+queue "broker" as SHBroker <<Redis Broker>>
+interface "broker Interface" as BrokerInterface
 
-SHBroker -- SHBrokerInterface
+SHBroker - BrokerInterface
 
-SHBrokerInterface <-- MobileBackend
-SHBrokerInterface --> LogBackend
+BrokerInterface <-- Core
+BrokerInterface --> LogBackend
 
-database "SH DB" as SHDB <<PostgreSQL>>
+database "Core DB" as SHDB <<PostgreSQL>>
 interface "DB\ninterface" as SHDBInterface
 SHDBInterface - SHDB
 
-component [sh-db-backend] as DbBackend <<Backend Component>> {
+component [core-db-backend] as CoreDb <<Backend Component>> {
 
 }
-DbBackend -> SHDBInterface
+CoreDb -> SHDBInterface
 interface "HTTP" as DbBackendHttpInterface
-DbBackendHttpInterface - DbBackend
-MobileBackend --> DbBackendHttpInterface
+DbBackendHttpInterface - CoreDb
+Core --> DbBackendHttpInterface
 
-package "House physical controllers" {
-    component [any-house] as anyHouse <<House Physical state controller>>
-    note top
-    Implements a physical house controller
-    with in-memory state of the house
-    (e.g. temperature, sensors states)
-    end note
-    interface "any-house-http" as anyHouseHttp
-    anyHouse - anyHouseHttp
-}
+component [env-event-producer] as envEventProducer <<Environment events producer>>
+note top
+Implements a physical house controllers
+with in-memory state of the house
+(e.g. temperature, sensors states)
+end note
 
 
-MobileBackend ----> anyHouseHttp
+envEventProducer --> BrokerInterface
+BrokerInterface -> Core
 
 component "Mobile Front" as mobileFront
 note top
