@@ -1,7 +1,7 @@
 package com.dacha.core.repo
 
 import com.dacha.core.model.House
-import com.dacha.core.model.mappers.toJson
+import com.dacha.core.model.mappers.toHouseJson
 import com.dacha.core.plugins.DatabaseManager.dbQuery
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
@@ -23,7 +23,7 @@ class HouseRepository {
     suspend fun findHouse(id: UUID): House? = dbQuery {
             HouseDAO.select {
                 (HouseDAO.id eq id)
-            }.mapNotNull { it.toJson() }.singleOrNull()
+            }.mapNotNull { it.toHouseJson() }.singleOrNull()
         }
 
     suspend fun saveHouse(house: House): House {

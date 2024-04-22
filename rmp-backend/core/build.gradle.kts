@@ -7,24 +7,25 @@ plugins {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-serialization-jackson")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-server-config-yaml")
-    implementation("io.ktor:ktor-serialization-jackson")
+    implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-jackson:1.6.8")
-    implementation("org.postgresql:postgresql:42.2.12")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.jetbrains.exposed:exposed-core:0.49.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.49.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.49.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.49.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.49.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.postgresql:postgresql:42.2.12")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0")
     implementation("com.zaxxer:HikariCP:5.1.0")
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     implementation("org.slf4j:slf4j-reload4j:2.0.12")
     implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+    testImplementation("io.ktor:ktor-server-tests-jvm")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
 repositories {

@@ -1,7 +1,10 @@
 package com.dacha.core
 
 import com.dacha.core.plugins.configureSerialization
+import com.dacha.core.plugins.configureStatusPages
+import com.dacha.core.routing.devicesRoute
 import com.dacha.core.routing.housesRoute
+import com.dacha.core.routing.roomsRoute
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -14,10 +17,13 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 @Suppress("unused")
 fun Application.module() {
     configureSerialization()
+    configureStatusPages()
     initDB()
 
     install(Routing) {
         housesRoute()
+        roomsRoute()
+        devicesRoute()
     }
 }
 
