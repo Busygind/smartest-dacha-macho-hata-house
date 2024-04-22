@@ -1,5 +1,6 @@
 package com.dacha
 
+import com.dacha.plugins.configureRedis
 import com.dacha.plugins.configureRouting
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -12,6 +13,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
+    configureRedis()
     configureSerialization()
     configureRouting()
 }

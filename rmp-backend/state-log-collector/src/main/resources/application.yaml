@@ -8,3 +8,6 @@ ktor:
 storage:
   clickhouse:
     url: "http://default:@localhost:8123/log-collector"
+  redis:
+    url: "redis://localhost:6379"
+    topic: "logs"
