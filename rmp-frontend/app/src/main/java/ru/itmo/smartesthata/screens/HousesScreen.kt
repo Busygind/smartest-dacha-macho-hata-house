@@ -19,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,6 +32,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ru.itmo.smartesthata.R
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.sp
 
 data class House(val value: Int, val name: String, val description: String)
 
@@ -43,16 +55,85 @@ val mockHouses = listOf(
     House(5,"Son's house", "Description 2"),
 )
 
+@Composable
+fun AddHouseDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onAddHouse: (House) -> Unit
+) {
+    if (showDialog) {
+        val name = remember { mutableStateOf("") }
+        val description = remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            title = null,
+            text = {
+                Column(modifier = Modifier.padding(top = 8.dp)) {
+                    Text(
+                        text = "Добавить новый дом",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = name.value,
+                        onValueChange = { name.value = it },
+                        label = { Text("Название") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = description.value,
+                        onValueChange = { description.value = it },
+                        label = { Text("Описание") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            onAddHouse(House(0, name.value, description.value))
+                            onDismiss()
+                        })
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                    onAddHouse(House(0, name.value, description.value))
+                    onDismiss()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xfff1be1f),
+                        contentColor = Color(0xFFFFFFFF)
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp, end = 16.dp)
+                ) {
+                    Text("Добавить")
+                }
+            },
+            dismissButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xfff1be1f),
+                        contentColor = Color(0xFFFFFFFF)
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
+                    onClick = { onDismiss() }) {
+                    Text("Отмена")
+                }
+            }
+        )
+    }
+}
 
 @Composable
 fun HousesScreen(navController: NavController) {
     val houses = remember { mutableStateOf(mockHouses) }
+    val showDialog = remember { mutableStateOf(false) }
     Scaffold(
         floatingActionButton = {
-            AddHouseButton {
-                // Логика добавления нового дома
-                // Например, открытие диалогового окна для ввода названия и описания дома
-            }
+            AddHouseButton(showDialog = showDialog)
         },
         content = { padding ->
             // Здесь отображается список домов
@@ -64,6 +145,15 @@ fun HousesScreen(navController: NavController) {
                     })
                 }
             }
+        }
+    )
+
+    AddHouseDialog(
+        showDialog = showDialog.value,
+        onDismiss = { showDialog.value = false },
+        onAddHouse = { newHouse ->
+            houses.value += newHouse
+            showDialog.value = false
         }
     )
 }
@@ -106,17 +196,19 @@ fun HouseCard(house: House, onHouseClick: () -> Unit) {
 }
 
 @Composable
-fun AddHouseButton(onAddHouse: (House) -> Unit) {
+fun AddHouseButton(showDialog: MutableState<Boolean>) {
     FloatingActionButton(
         contentColor = Color(0xFFFFFFFF),
         backgroundColor = Color(0xfff1be1f),
         onClick = {
-        // Здесь можно реализовать логику открытия диалогового окна для добавления нового дома
-        // После добавления вызываем onAddHouse с новым объектом House
-    }) {
+            // Открываем диалоговое окно
+            showDialog.value = true
+        }
+    ) {
         Icon(Icons.Filled.Add, contentDescription = "Add House")
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
