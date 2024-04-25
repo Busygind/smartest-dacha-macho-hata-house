@@ -133,8 +133,8 @@ fun CustomSwitch(state: Boolean) {
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = Color.White,
-            checkedTrackColor = Yellow,
-            checkedIconColor = Yellow,
+            checkedTrackColor = MaterialTheme.colors.secondary,
+            checkedIconColor = MaterialTheme.colors.secondary,
             uncheckedThumbColor = Color.Gray,
             uncheckedTrackColor = Color.White,
             uncheckedIconColor = Color.White,
@@ -163,10 +163,7 @@ fun BackButton() {
 @Composable
 fun AddButton(showDialog: MutableState<Boolean>) {
     FloatingActionButton(
-        modifier = Modifier
-            .size(70.dp)
-            .padding(bottom = 10.dp),
-        backgroundColor = Yellow,
+        backgroundColor = MaterialTheme.colors.secondary,
         onClick = {
             showDialog.value = true
         }
@@ -175,7 +172,6 @@ fun AddButton(showDialog: MutableState<Boolean>) {
             imageVector = Icons.Filled.Add,
             contentDescription = "add device",
             tint = Color.White,
-            modifier = Modifier.size(30.dp)
         )
     }
 }
