@@ -16,9 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SmartestHataTheme {
-                DevicesScreen()
-//                HousesScreen(navController = rememberNavController())
-//            AppNavigator()
+                AppNavigator()
             }
         }
     }

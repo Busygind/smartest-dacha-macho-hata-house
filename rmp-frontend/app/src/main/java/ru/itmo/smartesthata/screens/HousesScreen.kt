@@ -1,5 +1,6 @@
 package ru.itmo.smartesthata.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -40,19 +41,17 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.sp
 
 data class House(val value: Int, val name: String, val description: String)
 
 // Мок-данные для списков домов
 val mockHouses = listOf(
-    House(1,"Ken's house", "Description 1"),
-    House(2,"Barbie's house", "Description 2"),
-    House(3,"My house", "Description 2"),
-    House(4,"Mom's house", "Description 2"),
-    House(5,"Son's house", "Description 2"),
+    House(1,"Домик Кена", "Description 1"),
+    House(2,"Домик Барби", "Description 2"),
+    House(3,"Мой дом", "Description 2"),
+    House(4,"Дом мамы", "Description 2"),
+    House(5,"Дом сына", "Description 2"),
 )
 
 @Composable
@@ -103,8 +102,8 @@ fun AddHouseDialog(
                         onDismiss()
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xfff1be1f),
-                        contentColor = Color(0xFFFFFFFF)
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
                     ),
                     modifier = Modifier.padding(bottom = 8.dp, end = 16.dp)
                 ) {
@@ -114,8 +113,8 @@ fun AddHouseDialog(
             dismissButton = {
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xfff1be1f),
-                        contentColor = Color(0xFFFFFFFF)
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
                     ),
                     modifier = Modifier.padding(bottom = 8.dp, end = 8.dp),
                     onClick = { onDismiss() }) {
@@ -126,17 +125,34 @@ fun AddHouseDialog(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HousesScreen(navController: NavController) {
     val houses = remember { mutableStateOf(mockHouses) }
     val showDialog = remember { mutableStateOf(false) }
     Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Text(
+                    text = "Дома",
+                    style = MaterialTheme.typography.h1
+                )
+            }
+        },
         floatingActionButton = {
             AddHouseButton(showDialog = showDialog)
         },
         content = { padding ->
             // Здесь отображается список домов
-            LazyColumn(modifier = Modifier.padding(padding)) {
+            LazyColumn(
+                modifier = Modifier.padding(padding)
+            ) {
                 items(houses.value) { house ->
                     HouseCard(house = house, onHouseClick = {
                         // Переход на экран DevicesScreen
@@ -187,8 +203,8 @@ fun HouseCard(house: House, onHouseClick: () -> Unit) {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(8.dp),
-                color = Color(0xFFFFFFFF),
-                style = MaterialTheme.typography.h5
+                color = MaterialTheme.colors.onPrimary,
+                style = MaterialTheme.typography.h2
             )
         }
     }
@@ -197,8 +213,8 @@ fun HouseCard(house: House, onHouseClick: () -> Unit) {
 @Composable
 fun AddHouseButton(showDialog: MutableState<Boolean>) {
     FloatingActionButton(
-        contentColor = Color(0xFFFFFFFF),
-        backgroundColor = Color(0xfff1be1f),
+        contentColor = MaterialTheme.colors.onSecondary,
+        backgroundColor = MaterialTheme.colors.secondary,
         onClick = {
             // Открываем диалоговое окно
             showDialog.value = true
