@@ -71,8 +71,7 @@ fun AddHouseDialog(
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     Text(
                         text = "Добавить новый дом",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.h5
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -100,8 +99,8 @@ fun AddHouseDialog(
             confirmButton = {
                 Button(
                     onClick = {
-                    onAddHouse(House(0, name.value, description.value))
-                    onDismiss()
+                        onAddHouse(House(0, name.value, description.value))
+                        onDismiss()
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0xfff1be1f),
@@ -189,7 +188,7 @@ fun HouseCard(house: House, onHouseClick: () -> Unit) {
                     .align(Alignment.Center)
                     .padding(8.dp),
                 color = Color(0xFFFFFFFF),
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.h5
             )
         }
     }
@@ -217,4 +216,3 @@ fun HousesScreenPreview() {
     val navController = rememberNavController()
     HousesScreen(navController)
 }
-
