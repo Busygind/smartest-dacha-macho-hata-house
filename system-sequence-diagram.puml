@@ -50,8 +50,15 @@ SHDBInterface - SHDB
 component [core-db-backend] as CoreDb <<Backend Component>> {
 
 }
-Core --> Auth
-Auth --> Core
+
+interface "HTTP" as AuthHttpInterface
+Core -> AuthHttpInterface
+AuthHttpInterface --> Auth
+database "Auth DB" as AuthDB <<PostgreSQL>>
+interface "DB\ninterface" as AuthDBInterface
+Auth -> AuthDBInterface
+AuthDBInterface -> AuthDB
+
 CoreDb -> SHDBInterface
 interface "HTTP" as DbBackendHttpInterface
 DbBackendHttpInterface - CoreDb
