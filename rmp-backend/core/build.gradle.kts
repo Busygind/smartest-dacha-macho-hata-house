@@ -6,6 +6,10 @@ plugins {
     id("io.ktor.plugin") version "2.3.10"
 }
 
+application {
+    mainClass = "com.dacha.core.ApplicationKt"
+}
+
 dependencies {
     implementation("io.ktor:ktor-serialization-jackson")
     implementation("io.ktor:ktor-server-core-jvm")

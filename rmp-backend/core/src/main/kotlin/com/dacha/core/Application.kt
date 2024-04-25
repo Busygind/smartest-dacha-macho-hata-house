@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.Database
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 @Suppress("unused")
-suspend fun Application.module() {
+fun Application.module() {
     configureSerialization()
     configureStatusPages()
     configureRedisClient()

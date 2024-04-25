@@ -30,7 +30,7 @@ fun Application.configureRouting() {
     }
 }
 
-suspend fun Application.configureRedis() {
+fun Application.configureRedis() {
     val logDao = LogDao(environment.config.property("storage.clickhouse.url").getString())
 
     val config = Config()
@@ -43,5 +43,5 @@ suspend fun Application.configureRedis() {
         coroutineScope.launch {
             logDao.saveLogEntity(msg)
         }
-    }.awaitSingle()
+    }.block()
 }
