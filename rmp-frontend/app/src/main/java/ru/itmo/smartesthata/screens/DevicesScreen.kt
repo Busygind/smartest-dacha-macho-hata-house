@@ -42,6 +42,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.itmo.smartesthata.R
+import ru.itmo.smartesthata.ui.theme.Yellow
 
 @Composable
 fun DevicesScreen() {
@@ -131,8 +133,8 @@ fun CustomSwitch(state: Boolean) {
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = Color.White,
-            checkedTrackColor = Color.Gray,
-            checkedIconColor = Color.DarkGray,
+            checkedTrackColor = Yellow,
+            checkedIconColor = Yellow,
             uncheckedThumbColor = Color.Gray,
             uncheckedTrackColor = Color.White,
             uncheckedIconColor = Color.White,
@@ -161,8 +163,10 @@ fun BackButton() {
 @Composable
 fun AddButton(showDialog: MutableState<Boolean>) {
     FloatingActionButton(
-        contentColor = Color.White,
-        backgroundColor = Color.Gray,
+        modifier = Modifier
+            .size(70.dp)
+            .padding(bottom = 10.dp),
+        backgroundColor = Yellow,
         onClick = {
             showDialog.value = true
         }
@@ -170,6 +174,8 @@ fun AddButton(showDialog: MutableState<Boolean>) {
         Icon(
             imageVector = Icons.Filled.Add,
             contentDescription = "add device",
+            tint = Color.White,
+            modifier = Modifier.size(30.dp)
         )
     }
 }
