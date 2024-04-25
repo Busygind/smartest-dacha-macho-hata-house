@@ -1,5 +1,6 @@
 package com.dacha.env.event.producer
 
+import com.dacha.model.EnvStateEvent
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -60,7 +61,6 @@ fun Routing.houseRouting() {
     }
 }
 
-data class EnvStateEvent(val houseId: UUID, val envType: String, val amount: Int)
 data class House(val id: UUID)
 enum class EnvType(val from: Int, val to: Int) {
     LIGHT(5, 120000),

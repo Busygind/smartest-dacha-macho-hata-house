@@ -12,7 +12,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
-fun Application.module() {
+suspend fun Application.module() {
     configureRedis()
     configureSerialization()
     configureRouting()

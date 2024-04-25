@@ -1,13 +1,11 @@
 package com.dacha.core.repo
 
 import com.dacha.core.model.Device
+import com.dacha.core.model.Room
 import com.dacha.core.model.mappers.toDeviceJson
 import com.dacha.core.plugins.DatabaseManager.dbQuery
-import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.update
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.jetbrains.exposed.sql.*
 import java.util.UUID
 
 object DeviceDAO : Table("rooms_devices") {
@@ -24,6 +22,14 @@ class DeviceRepository {
         DeviceDAO.select {
             (DeviceDAO.id eq id)
         }.mapNotNull { it.toDeviceJson() }.singleOrNull()
+    }
+
+    suspend fun findDevicesInHome(id: UUID): List<Device> = dbQuery {
+        DeviceDAO.innerJoin(RoomDAO, { roomId }, { RoomDAO.id })
+            .innerJoin(HouseDAO, { RoomDAO.houseId }, { HouseDAO.id })
+            .select {
+                (HouseDAO.id eq id)
+            }.mapNotNull { it.toDeviceJson() }
     }
 
     suspend fun saveDevice(device: Device): Device {
