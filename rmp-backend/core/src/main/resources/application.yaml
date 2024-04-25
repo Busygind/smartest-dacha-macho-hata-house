@@ -5,3 +5,8 @@ ktor:
   application:
     modules:
       - com.dacha.core.ApplicationKt.module
+
+storage:
+  redis:
+    url: "redis://localhost:6379"
+    topic: "logs"
