@@ -13,6 +13,8 @@ object DeviceDAO : Table("rooms_devices") {
     val type = varchar("type", 64)
     val state = bool("state")
     val triggerAmount = integer("trigger_amount").nullable()
+    val availableDeviceId = uuid("available_device_id").references(AvailableDeviceDao.id, onDelete = ReferenceOption.CASCADE)
+    val eventType = text("event_type")
 }
 
 class DeviceRepository {
@@ -39,6 +41,8 @@ class DeviceRepository {
                 it[type] = device.type.toString()
                 it[state] = device.state
                 it[triggerAmount] = device.triggerAmount
+                it[availableDeviceId] = device.availableDeviceId
+                it[eventType] = device.eventType.name
             }
         }
         return findDevice(device.id)!!

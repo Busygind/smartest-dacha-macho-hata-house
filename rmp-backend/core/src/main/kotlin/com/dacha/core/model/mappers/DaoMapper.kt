@@ -1,12 +1,11 @@
 package com.dacha.core.model.mappers
 
-import com.dacha.core.model.Device
-import com.dacha.core.model.DeviceType
-import com.dacha.core.model.House
-import com.dacha.core.model.Room
+import com.dacha.core.model.*
+import com.dacha.core.repo.AvailableDeviceDao
 import com.dacha.core.repo.DeviceDAO
 import com.dacha.core.repo.HouseDAO
 import com.dacha.core.repo.RoomDAO
+import com.dacha.model.EnvType
 import org.jetbrains.exposed.sql.ResultRow
 
 fun ResultRow.toHouseJson(): House = House(
@@ -28,5 +27,14 @@ fun ResultRow.toDeviceJson(): Device = Device(
     name = this[DeviceDAO.name],
     type = DeviceType.valueOf(this[DeviceDAO.type]),
     state = this[DeviceDAO.state],
-    triggerAmount = this[DeviceDAO.triggerAmount]
+    triggerAmount = this[DeviceDAO.triggerAmount],
+    availableDeviceId = this[DeviceDAO.availableDeviceId],
+    eventType = EnvType.valueOf(this[DeviceDAO.eventType])
 ).also { it.roomId = this[DeviceDAO.roomId] }
+
+fun ResultRow.toAvailableDevice(): AvailableDevice = AvailableDevice(
+    id = this[AvailableDeviceDao.id],
+    name = this[AvailableDeviceDao.name],
+    description = this[AvailableDeviceDao.description],
+    type = DeviceType.valueOf(this[AvailableDeviceDao.type])
+)

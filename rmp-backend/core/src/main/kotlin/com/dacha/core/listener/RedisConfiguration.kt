@@ -14,7 +14,7 @@ lateinit var envEventHandler: EnvEventHandler
 val IODispatcher = Dispatchers.IO
 val coroutineScope = CoroutineScope(IODispatcher)
 
-suspend fun Application.configureRedisClient() {
+fun Application.configureRedisClient() {
     val config = Config()
     config.useSingleServer().address = environment.config.property("storage.redis.url").getString()
 
@@ -28,5 +28,5 @@ suspend fun Application.configureRedisClient() {
         coroutineScope.launch {
             envEventHandler.handle(msg)
         }
-    }.awaitSingle()
+    }.block()
 }

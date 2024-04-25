@@ -28,6 +28,10 @@ repositories {
     mavenCentral()
 }
 
+application {
+    mainClass = "com.dacha.ApplicationKt"
+}
+
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
     jvmTarget = "17"
