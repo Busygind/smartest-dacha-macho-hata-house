@@ -31,6 +31,10 @@ component [log-backend] as LogBackend <<Backend Component>> {
 }
 LogBackend - LogDbInterface
 
+component [auth-service] as Auth <<Backend Component>> {
+
+}
+
 queue "broker" as SHBroker <<Redis Broker>>
 interface "broker Interface" as BrokerInterface
 
@@ -46,6 +50,8 @@ SHDBInterface - SHDB
 component [core-db-backend] as CoreDb <<Backend Component>> {
 
 }
+Core --> Auth
+Auth --> Core
 CoreDb -> SHDBInterface
 interface "HTTP" as DbBackendHttpInterface
 DbBackendHttpInterface - CoreDb
