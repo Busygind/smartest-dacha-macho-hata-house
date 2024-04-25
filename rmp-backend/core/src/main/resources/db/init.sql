@@ -22,7 +22,9 @@ create table if not exists rooms_devices
     room_id uuid references rooms(id),
     state boolean not null default false,
     type varchar(64) not null,
-    trigger_amount integer
+    trigger_amount integer,
+    available_device_id uuid references available_devices(id),
+    event_type text not null
 );
 
 create table if not exists available_devices
