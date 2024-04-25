@@ -29,7 +29,7 @@ LogDB -- LogDbInterface
 component [log-backend] as LogBackend <<Backend Component>> {
 
 }
-LogBackend - LogDbInterface
+LogBackend -> LogDbInterface
 
 component [auth-service] as Auth <<Backend Component>> {
 
@@ -53,11 +53,11 @@ component [core-db-backend] as CoreDb <<Backend Component>> {
 
 interface "HTTP" as AuthHttpInterface
 Core -> AuthHttpInterface
-AuthHttpInterface --> Auth
+AuthHttpInterface -- Auth
 database "Auth DB" as AuthDB <<PostgreSQL>>
 interface "DB\ninterface" as AuthDBInterface
 Auth -> AuthDBInterface
-AuthDBInterface -> AuthDB
+AuthDBInterface - AuthDB
 
 CoreDb -> SHDBInterface
 interface "HTTP" as DbBackendHttpInterface
