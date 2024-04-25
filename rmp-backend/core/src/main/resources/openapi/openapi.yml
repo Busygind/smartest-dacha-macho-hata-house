@@ -1,0 +1,334 @@
+openapi: 3.0.0
+
+info:
+  title: core-api
+  version: ""
+  description: ""
+
+servers:
+  - url: /dacha-core
+
+paths:
+  /houses:
+    post:
+      tags:
+        - House
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/NewHouse"
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/House"
+      summary: Создать дом
+      operationId: addHouse
+  /houses/{houseId}:
+    get:
+      tags:
+        - House
+      parameters:
+        - &houseId
+          in: path
+          name: houseId
+          required: true
+          schema:
+            $ref: "#/components/schemas/BaseID"
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/House"
+        404:
+          description: Not found
+      summary: Получить дом по ID
+      operationId: getHouseById
+  /houses/{houseId}/rooms:
+    post:
+      tags:
+        - Room
+      parameters:
+        - *houseId
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/NewRoom"
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Room"
+      summary: Создать комнату в доме
+      operationId: addRoom
+    get:
+      tags:
+        - Room
+      parameters:
+        - *houseId
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Room"
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Получить все комнаты в доме
+      operationId: listRoomsByHouseId
+  /houses/{houseId}/rooms/{roomId}:
+    get:
+      tags:
+        - Room
+      parameters:
+        - *houseId
+        - &roomId
+          name: roomId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/BaseID"
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Room"
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Получить комнату по ID
+      operationId: getRoomById
+  /houses/{houseId}/rooms/{roomId}/devices/{deviceId}:
+    get:
+      tags:
+        - Device
+      parameters:
+        - *houseId
+        - *roomId
+        - &deviceId
+          name: deviceId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/BaseID"
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Device"
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Получить девайс по ID
+      operationId: getDeviceById
+    delete:
+      tags:
+        - Device
+      parameters:
+        - *houseId
+        - *roomId
+        - *deviceId
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Удалить девайс по ID
+      operationId: deleteDeviceById
+  /houses/{houseId}/rooms/{roomId}/devices:
+    get:
+      tags:
+        - Device
+      parameters:
+        - *houseId
+        - *roomId
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Device"
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Получить все девайсы в комнате
+      operationId: listDevicesByRoomId
+    post:
+      tags:
+        - Device
+      parameters:
+        - *houseId
+        - *roomId
+        - *deviceId
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/NewDevice"
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Device"
+      summary: Добавить девайс в комнату
+      operationId: addDevice
+  /houses/{houseId}/rooms/{roomId}/devices/{deviceId}/trigger:
+    put:
+      tags:
+        - Device
+      parameters:
+        - *houseId
+        - *roomId
+        - *deviceId
+        - &amount
+          in: query
+          name: amount
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Device"
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Изменить значение триггера
+      operationId: changeTriggerAmount
+  /houses/{houseId}/devices/{deviceId}/room/{roomId}:
+    patch:
+      tags:
+        - Device
+      parameters:
+        - *houseId
+        - *roomId
+        - *deviceId
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad request
+        404:
+          description: Not found
+      summary: Переместить девайс в указанную комнату
+      operationId: changeRoom
+
+components:
+  schemas:
+    House:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/NewHouse"
+      required:
+        - id
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/BaseID"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    NewHouse:
+      type: object
+      required:
+        - name
+        - userLogin
+      properties:
+        name:
+          type: string
+          example: Барби Дом
+        userLogin:
+          type: string
+          example: Яна
+    BaseID:
+      type: string
+      format: uuid
+    Room:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/NewRoom"
+      required:
+        - id
+        - houseId
+      properties:
+        id:
+          $ref: "#/components/schemas/BaseID"
+        houseId:
+          $ref: "#/components/schemas/BaseID"
+    NewRoom:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Гостиная
+    Device:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/NewDevice"
+      required:
+        - id
+        - state
+        - roomId
+      properties:
+        id:
+          $ref: "#/components/schemas/BaseID"
+        roomId:
+          $ref: "#/components/schemas/BaseID"
+        state:
+          type: boolean
+    NewDevice:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Лампа
+        type:
+          $ref: "#/components/schemas/DeviceType"
+        triggerAmount:
+          type: integer
+          example: 5
+
+    DeviceType:
+      type: string
+      enum:
+        - ONLY_MANUAL
+        - TEMPERATURE
+        - LIGHT

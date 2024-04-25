@@ -16,8 +16,7 @@ note left
 API to:
     1. change state of any device in the house
     2. receive info about the house state
-    3. receive online video
-    4. register/login
+    3. register/login
 </code>
 end note
 

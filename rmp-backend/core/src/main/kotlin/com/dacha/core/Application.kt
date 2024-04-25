@@ -23,9 +23,11 @@ suspend fun Application.module() {
     initDB()
 
     install(Routing) {
-        housesRoute()
-        roomsRoute()
-        devicesRoute()
+        route("/dacha-core") {
+            housesRoute()
+            roomsRoute()
+            devicesRoute()
+        }
     }
 }
 

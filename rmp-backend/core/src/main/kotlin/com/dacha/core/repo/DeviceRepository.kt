@@ -1,10 +1,8 @@
 package com.dacha.core.repo
 
 import com.dacha.core.model.Device
-import com.dacha.core.model.Room
 import com.dacha.core.model.mappers.toDeviceJson
 import com.dacha.core.plugins.DatabaseManager.dbQuery
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
 
@@ -53,5 +51,13 @@ class DeviceRepository {
             }
         }
         return findDevice(deviceId)!!
+    }
+
+    suspend fun changeRoom(deviceId: UUID, roomId: UUID) {
+        dbQuery {
+            DeviceDAO.update({ DeviceDAO.id eq deviceId }) {
+                it[DeviceDAO.roomId] = roomId
+            }
+        }
     }
 }
