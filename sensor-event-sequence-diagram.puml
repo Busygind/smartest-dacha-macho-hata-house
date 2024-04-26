@@ -1,0 +1,45 @@
+@startuml
+title "Sensor event sequence diagram"
+
+participant "sensors-service" as sensorsService <<Ktor application>>
+queue "Redis events queue" as redisEventsQueue <<Redis>>
+
+participant "Core" as core <<Ktor Component>>
+database "core-db" as coreDb <<PostgreSQL>>
+
+queue "Redis log queue" as redisQueue <<Redis>>
+participant "Log Collector" as logCollector <<Ktor Component>>
+database "log-db" as logDb <<Clickhouse>>
+
+group Sensor state changed
+sensorsService -> redisEventsQueue : 0.1 Sensors state \n changed event
+activate redisEventsQueue
+redisEventsQueue -> core : 0.2 Event retrieved \n from queue
+deactivate redisEventsQueue
+activate core
+core -> coreDb : 0.3 Select subscribed devices
+activate coreDb
+coreDb -> core : 0.4 Subscribed devices list
+deactivate coreDb
+core -> core : 0.5 Find devices which state \n needs to be changed
+core -> coreDb : 0.6 Update devices' status
+activate coreDb
+coreDb -> core : 0.7 OK
+deactivate coreDb
+group Asynchronously log switching event
+core -> redisQueue : 4.5 Send device status \n switched event
+deactivate core
+activate redisQueue
+redisQueue -> logCollector : 4.6 Retrieve  status \n switched event
+deactivate redisQueue
+activate logCollector
+logCollector -> logDb : 4.7 Log switching info
+activate logDb
+logDb -> logCollector : 4.8 OK
+deactivate logCollector
+deactivate logDb
+deactivate redisQueue
+end group
+end group
+
+@enduml

@@ -1,0 +1,115 @@
+@startuml
+title "Backend sequence diagram"
+
+participant "android-client" as client <<Android application>>
+
+box "Backend"
+participant "Core" as core <<Ktor Component>>
+database "core-db" as coreDb <<PostgreSQL>>
+participant "auth-service" as authService <<Ktor Component>>
+database "user-db" as userDb <<PostgreSQL>>
+queue "Redis queue" as redisQueue <<Redis>>
+participant "Log Collector" as logCollector <<Ktor Component>>
+database "log-db" as logDb <<Clickhouse>>
+end box
+
+
+group User registration
+activate client
+client -> core : 0.1 send register request
+activate core
+core -> core : 0.2 validate user data
+core -> authService : 0.3 send save user request
+activate authService
+break On user data invalid
+authService -> client : 0.3.1 Error
+end break
+authService -> userDb : 0.4 save user to db
+activate userDb
+break On user already exists
+userDb -> client: 0.4.1 Error
+end break
+userDb -> authService: 0.5 OK
+deactivate userDb
+authService -> core : 0.6 OK
+deactivate authService
+core -> client : 0.7 OK
+deactivate core
+end group
+
+
+group Adding house information
+client -> core : 1.1 send request to create new house
+activate core
+core -> core : 1.2 validate house information
+core -> coreDb : 1.3 save house information
+activate coreDb
+break On constraint violations
+coreDb -> client : 1.3.1 An error occurred while saving \n house data
+end break
+coreDb -> core : 1.4 OK
+deactivate coreDb
+core -> client : 1.5 OK
+deactivate core
+
+end group
+
+
+group Adding room information
+client -> core : 2.1 send request to create new room
+activate core
+core -> core : 2.2 validate room information
+core -> coreDb : 2.3 save room information
+activate coreDb
+break On constraint violations
+coreDb -> client : 2.3.1 An error occurred while saving \n room data
+end break
+coreDb -> core : 2.4 OK
+deactivate coreDb
+core -> client : 2.5 OK
+deactivate core
+
+end group
+
+
+group Adding device information
+client -> core : 3.1 send request to create new device
+activate core
+core -> core : 3.2 validate device information
+core -> coreDb : 3.3 save device information
+activate coreDb
+break On constraint violations
+coreDb -> client : 3.3.1 An error occurred while saving \n device data
+end break
+coreDb -> core : 3.4 OK
+deactivate coreDb
+core -> client : 3.5 OK
+deactivate core
+end group
+
+group Turning device on/off
+client -> core : 4.1 Send turn on/off request
+activate core
+core -> coreDb : 4.2 Switch device status
+activate coreDb
+coreDb -> core : 4.3 OK
+deactivate coreDb
+core -> client : 4.4 OK
+group Asynchronously log switching event
+core -> redisQueue : 4.5 Send device status \n switched event
+deactivate core
+activate redisQueue
+redisQueue -> logCollector : 4.6 Retrieve  status \n switched event
+deactivate redisQueue
+activate logCollector
+logCollector -> logDb : 4.7 Log switching info
+activate logDb
+logDb -> logCollector : 4.8 OK
+deactivate logCollector
+deactivate logDb
+deactivate redisQueue
+end group
+end group
+
+deactivate client
+@enduml
