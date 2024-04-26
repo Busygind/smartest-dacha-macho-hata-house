@@ -21,6 +21,8 @@ dependencies {
     implementation("com.clickhouse:clickhouse-http-client:0.5.0")
     implementation("com.github.salomonbrys.kodein:kodein:4.1.0")
     implementation("io.ktor:ktor-server-config-yaml")
+    implementation(project(mapOf("path" to ":dacha-backend-model")))
+    implementation(project(mapOf("path" to ":dacha-backend-model")))
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }

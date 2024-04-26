@@ -54,11 +54,20 @@ fun Route.devicesRoute() {
             call.respond(
                 deviceService.changeTriggerAmount(
                     call.parameters["deviceId"]!!.toUuid(),
-                    call.request.queryParameters["amount"]!!.toInt()
+                    call.request.queryParameters["amount"]!!.toInt(),
+                )
+            )
+        }
+
+        put("/{deviceId}/status") {
+            call.respond(
+                deviceService.switchStatus(
+                    call.parameters["deviceId"]!!.toUuid(),
                 )
             )
         }
     }
+
     route("/houses/{houseId}/devices/{deviceId}/room/{roomId}") {
         patch("/") {
             deviceService.changeRoom(
