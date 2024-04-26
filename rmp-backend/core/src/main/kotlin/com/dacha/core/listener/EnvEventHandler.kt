@@ -10,7 +10,7 @@ class EnvEventHandler {
     suspend fun handle(event: EnvStateEvent) {
         val devices = deviceRepository.findDevicesInHome(event.houseId)
         for (device in devices) {
-            if (device.eventType.name == event.envType) {
+            if (device.eventType.name != event.envType) {
                 continue
             }
 
