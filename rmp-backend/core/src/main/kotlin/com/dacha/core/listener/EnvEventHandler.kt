@@ -1,5 +1,6 @@
 package com.dacha.core.listener
 
+import com.dacha.core.model.DeviceType
 import com.dacha.core.repo.DeviceRepository
 import com.dacha.model.EnvStateEvent
 
@@ -10,7 +11,7 @@ class EnvEventHandler {
     suspend fun handle(event: EnvStateEvent) {
         val devices = deviceRepository.findDevicesInHome(event.houseId)
         for (device in devices) {
-            if (device.eventType.name != event.envType) {
+            if (device.type == DeviceType.MANUAL && device.eventType.name != event.envType) {
                 continue
             }
 

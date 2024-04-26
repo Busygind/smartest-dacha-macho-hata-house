@@ -1,7 +1,7 @@
 package com.dacha.core.model
 
 enum class DeviceType {
-    ONLY_MANUAL,
+    MANUAL,
     TEMPERATURE,
     LIGHT,
 }
