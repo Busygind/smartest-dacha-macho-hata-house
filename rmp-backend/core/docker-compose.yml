@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: dacha-core
+      POSTGRES_USER: busygind02
+      POSTGRES_PASSWORD: chh455
+    ports:
+      - "5432:5432"
+    volumes:
+      - my_db_volume:/var/lib/postgresql/data
+      - ./src/main/resources/db:/docker-entrypoint-initdb.d
+
+volumes:
+  my_db_volume:

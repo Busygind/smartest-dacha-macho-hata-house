@@ -1,6 +1,6 @@
 package com.dacha.core
 
-import com.dacha.core.listener.configureRedisClient
+import com.dacha.core.listener.configureScheduler
 import com.dacha.core.plugins.configureSerialization
 import com.dacha.core.plugins.configureStatusPages
 import com.dacha.core.routing.devicesRoute
@@ -19,7 +19,7 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun Application.module() {
     configureSerialization()
     configureStatusPages()
-    configureRedisClient()
+    configureScheduler()
     initDB()
 
     install(Routing) {

@@ -15,6 +15,14 @@ create table if not exists rooms
     house_id uuid references houses (id)
 );
 
+create table if not exists available_devices
+(
+    id uuid primary key,
+    name varchar(64) not null,
+    description varchar(256),
+    type varchar(64) not null
+);
+
 create table if not exists rooms_devices
 (
     id uuid primary key,
@@ -25,12 +33,4 @@ create table if not exists rooms_devices
     trigger_amount integer,
     available_device_id uuid references available_devices(id),
     event_type text not null
-);
-
-create table if not exists available_devices
-(
-    id uuid primary key,
-    name varchar(64) not null,
-    description varchar(256),
-    type varchar(64) not null
 );

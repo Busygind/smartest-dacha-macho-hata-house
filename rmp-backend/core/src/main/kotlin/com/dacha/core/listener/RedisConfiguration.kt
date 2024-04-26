@@ -8,25 +8,42 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactor.awaitSingle
 import org.redisson.Redisson
 import org.redisson.config.Config
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 lateinit var envEventHandler: EnvEventHandler
 
 val IODispatcher = Dispatchers.IO
 val coroutineScope = CoroutineScope(IODispatcher)
 
-fun Application.configureRedisClient() {
+const val ENV_EVENT_QUEUE = "env_state_events"
+const val CHUNK_SIZE = 100
+
+fun Application.configureScheduler() {
     val config = Config()
     config.useSingleServer().address = environment.config.property("storage.redis.url").getString()
 
     val client = Redisson.create(config).reactive()
 
-    envEventHandler = EnvEventHandler(client)
+    envEventHandler = EnvEventHandler()
 
-    val topic = environment.config.property("storage.redis.topic").getString()
 
-    client.getTopic(topic).addListener(EnvStateEvent::class.java) { _, msg ->
-        coroutineScope.launch {
-            envEventHandler.handle(msg)
-        }
-    }.block()
+    val executor: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
+
+    executor.scheduleAtFixedRate(
+        {
+            coroutineScope.launch {
+                val events: List<EnvStateEvent> = client.getQueue<EnvStateEvent>(ENV_EVENT_QUEUE).poll(CHUNK_SIZE)
+                    .awaitSingle()
+
+                events.forEach {
+                    envEventHandler.handle(it)
+                }
+            }
+        },
+        1000,
+        100,
+        TimeUnit.MILLISECONDS
+    )
 }

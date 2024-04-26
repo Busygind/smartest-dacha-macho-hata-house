@@ -24,6 +24,15 @@ class DeviceRepository {
         }.mapNotNull { it.toDeviceJson() }.singleOrNull()
     }
 
+    suspend fun updateDeviceState(deviceId: UUID, state: Boolean): Device {
+        dbQuery {
+            DeviceDAO.update({ DeviceDAO.id eq deviceId }) {
+                it[this.state] = state
+            }
+        }
+        return findDevice(deviceId)!!
+    }
+
     suspend fun findDevicesInHome(id: UUID): List<Device> = dbQuery {
         DeviceDAO.innerJoin(RoomDAO, { roomId }, { RoomDAO.id })
             .innerJoin(HouseDAO, { RoomDAO.houseId }, { HouseDAO.id })
